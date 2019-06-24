@@ -28,3 +28,7 @@ git merge master
 ### [TB3 Wire Frame](https://balsamiq.cloud/snv27r3/psb9t6x/r5CD2)
 ### [TB3 Slack Channel for Lambda School](https://lambdaschoolstudents.slack.com/messages/GK03AQT8Q/)
 
+html Templates are stored in the static folder of this doc site
+
+[SendGrid Email Message Template](./sendgrid-message-template.html)
+[Auth0 Magic Link Email Template Liquid+HTML](./auth0-magiclink-email-template.html)
