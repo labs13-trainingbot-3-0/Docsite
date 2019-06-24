@@ -1,0 +1,3109 @@
+<!doctype html>
+<html>
+<head>
+	<meta name="generator" content="Hugo 0.53" />
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Training Bot 3 API</title>
+    <link href='/slate/stylesheets/monokai.css' rel="stylesheet" media="screen" />
+<link href='/slate/stylesheets/screen.css' rel="stylesheet" media="screen" />
+<link href='/slate/stylesheets/print.css' rel="stylesheet" media="print" />
+<link href='/slate/stylesheets/profile.css' rel="stylesheet"/>
+    
+<script src='/slate/javascripts/all.js'></script>
+
+    
+</head>
+<body class="index" data-languages="[ &#34;shell&#34; ]">
+    <a href="#" id="nav-button">
+        <span>
+        NAV
+        <img src='/slate/images/navbar.png'/>
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+        
+         <img src='/images/logo.png' />
+        
+        <div class="lang-selector">
+            
+            <a href="#" data-language-name="shell">Code</a>
+            
+        </div>
+         
+        
+        <div class="search">
+            <input type="search" class="search" id="input-search" placeholder='Search'>
+        </div>
+        <ul class="search-results"></ul>
+        
+        <div id="toc">
+        </div>
+        
+        <div class="toc-footer">
+            <h3 class="translations-title">Translation</h3> 
+            
+<ul>
+    
+        <li><a href="/nn/"></a></li>
+    
+</ul>
+
+
+        </div>
+         
+        
+        
+    </div>
+    <div class="page-wrapper">
+        <div class="dark-box"></div>
+        <div class="content">
+            
+    
+        
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Welcome to the <a href="https://github.com/labs13-trainingbot-3-0/" target="_blank">Training Bot 3 Project</a>. This document will walk you through how to configure, deploy, and interact with the Training Bot 3, and the APIs it consumes.</p>
+
+<h3 id="git-workflow">Git Workflow</h3>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># Lambda School git flow</span>
+git checkout master
+git pull
+git checkout <span class="nv">$your</span>-name
+git merge master
+
+<span class="c1"># we eventually started using feature based branches</span>
+git checkout master
+git pull
+git checkout <span class="nv">$feature</span>-name
+git merge master</code></pre></div>
+<h3 id="tb3-trello-board-https-trello-com-b-ssdyh0e2-labs-13-trainingbot-30"><a href="https://trello.com/b/sSDYh0E2/labs-13-trainingbot-30" target="_blank">TB3 Trello Board</a></h3>
+
+<h3 id="tb3-product-canvas-https-docs-google-com-document-d-1k9zni-qomdatx87ilr7etao1jk9wzj95qfahcxhbqbu-edit"><a href="https://docs.google.com/document/d/1k9Zni_QOmdATX87iLr7etAO1jk9WZJ95qfaHCxHBqBU/edit" target="_blank">TB3 Product Canvas</a></h3>
+
+<h3 id="tb3-wire-frame-https-balsamiq-cloud-snv27r3-psb9t6x-r5cd2"><a href="https://balsamiq.cloud/snv27r3/psb9t6x/r5CD2" target="_blank">TB3 Wire Frame</a></h3>
+
+<h3 id="tb3-slack-channel-for-lambda-school-https-lambdaschoolstudents-slack-com-messages-gk03aqt8q"><a href="https://lambdaschoolstudents.slack.com/messages/GK03AQT8Q/" target="_blank">TB3 Slack Channel for Lambda School</a></h3>
+
+    
+        
+
+<h1 id="training-bot-documentation">Training Bot Documentation</h1>
+
+<p>This is the detailed developer documentation for Training Bot, and as such, we&rsquo;ve written these docs with Lambda Labs teams who are inheriting this application in mind.</p>
+
+<p>The following docs should be completed in order, both to ensure a smooth deployment and also to guarantee a scalable workflow for each developer:</p>
+
+<ol>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="deployment.md" target="_blank">Deployment</a></li>
+<li><a href="setup.md" target="_blank">Setup</a></li>
+</ol>
+
+<p>And the documentation listed below is more for reference, they describe big picture ideas like the directory structure of the application and how the data model works:</p>
+
+<ul>
+<li><a href="database.md" target="_blank">Database</a></li>
+<li><a href="pm2.md" target="_blank">PM2</a></li>
+<li><a href="jobs.md" target="_blank">Server jobs</a></li>
+</ul>
+
+    
+        
+
+<h1 id="setup">Setup</h1>
+
+<p>This document will explain what&rsquo;s needed to set up your local development environment, including some optional (but highly recommended) tools to speed your workflow up and improve the consistency of your code with the existing codebase.</p>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+<li><a href="#required-tools">Required tools</a>
+
+<ul>
+<li><a href="#postgresql">PostgreSQL</a></li>
+</ul></li>
+<li><a href="#optional-tools">Optional Tools</a>
+
+<ul>
+<li><a href="#gitmoji-cli">Gitmoji CLI</a></li>
+<li><a href="#prettier">Prettier</a></li>
+</ul></li>
+</ul>
+
+<h2 id="required-tools">Required tools</h2>
+
+<p>The following tools or pieces of software are required to set up a local developer environment for Training Bot.</p>
+
+<h3 id="postgresql">PostgreSQL</h3>
+
+<p>Both the development and production databases for Training Bot are designed for PostgreSQL. This means that in order to run the API locally, you&rsquo;ll need to install PostgreSQL on your system.</p>
+
+<p>The reason for this is consistency, since Lambda Labs teams don&rsquo;t have a staging/dev server to work with, ensuring that your local devlopment database mirrors the production database is essential if you want to write the right code the first time.</p>
+
+<p>You&rsquo;ll find install instructions for your system on the <a href="https://www.postgresql.org/" target="_blank">official website</a>. Once it&rsquo;s installed you&rsquo;ll need to create a database for your local system, and then put your database, your postgres username, and your postgres user password into your <code>.env</code> file.</p>
+
+<h2 id="optional-tools">Optional tools</h2>
+
+<p>The following development tools are optional, but highly recommended.</p>
+
+<h3 id="gitmoji-cli-https-github-com-carloscuesta-gitmoji-cli"><a href="https://github.com/carloscuesta/gitmoji-cli" target="_blank">Gitmoji-CLI</a></h3>
+
+<p>The gitmoji-cli is a global npm package that will help you both categorize and form great commit messages using the <a href="https://gitmoji.carloscuesta.me/" target="_blank">Gitmoji schema for commits</a>. You can install it by running the following command in your terminal:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">npm i -g gitmoji-cli</code></pre></div>
+<p>After it&rsquo;s installed, you&rsquo;ll want to <code>cd</code> into your local repository and configure it by running:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gitmoji --config</code></pre></div>
+<p>Gitmoji will then ask you a series of configuration questions.</p>
+
+<p>You&rsquo;ll want to say <code>n</code> to <code>Enable Automatic &quot;git add .&quot;</code>, choose &ldquo;github&rdquo; as the issue format, use the <code>:smile:</code> option for how to emojis should be used, and say <code>n</code> to <code>Enable signed commits</code> (unless you know what you&rsquo;re doing there and have a signing key set up with Git already).</p>
+
+<p>After you&rsquo;re configured, you&rsquo;ll add the gitmoji hook to your local repository by running:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gimoji --init</code></pre></div>
+<p>After that, whenever you run <code>git commit</code> it will ask you a series of questions to form your commit message. The benefit of this is:</p>
+
+<ol>
+<li>A better commit history</li>
+<li>The ability to search your commit history by emoji to find a certain <em>type</em> of change (i.e. <code>:fire:</code> to find places where code or files were deleted, which might have caused the weird bug you&rsquo;re now seeing :laughing:)</li>
+</ol>
+
+<p>More detailed information on this can be found at <a href="https://github.com/carloscuesta/gitmoji-cli" target="_blank">the package&rsquo;s official repository</a>, and you can see how it was used on the Labs 12 version of Training Bot in <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE" target="_blank">their repository</a></p>
+
+<h1 id="prettier">Prettier</h1>
+
+<p><a href="https://prettier.io/" target="_blank">Prettier</a> is an opinionated code formatter. The negative here is that it won&rsquo;t make any one person super happy because everyone will likely have <em>some</em> issue with its opinions. The positive here is that it will guarantee that your team&rsquo;s code looks the same without having to set up a detailed linter or a bunch of rules. It has extensions for most editors and should be installable without issue.</p>
+
+    
+        
+
+<h1 id="prerequisites">Prerequisites</h1>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+<li><a href="#intro">Intro</a>
+
+<ul>
+<li><a href="#a-note-on-creating-the-accounts">A note on creating the accounts</a></li>
+<li><a href="#generating-your-environment-file">Generating your environment file</a></li>
+</ul></li>
+<li><a href="#auth0">Auth0</a>
+
+<ul>
+<li><a href="#how-training-bot-uses-auth0">How Training Bot uses Auth0</a></li>
+<li><a href="#configuring-auth0">Configuring Auth0</a></li>
+</ul></li>
+<li><a href="#sendgrid">SendGrid</a>
+
+<ul>
+<li><a href="#configuring-sendgrid">Configuring SendGrid</a></li>
+</ul></li>
+<li><a href="#slack">Slack</a></li>
+<li><a href="#stripe">Stripe</a></li>
+<li><a href="#twilio">Twilio</a>
+
+<ul>
+<li><a href="#configuring-twilio">Configuring Twilio</a></li>
+</ul></li>
+</ul>
+
+<h2 id="intro">Intro</h2>
+
+<p>Before deploying or doing much of anything with Training Bot, you&rsquo;re going to need to set up some accounts with the third party services that Training Bot relies on.</p>
+
+<p>This document will reflect where to go to create the accounts, what keys you will need, and a general overview of how they work with Training Bot.</p>
+
+<h3 id="a-note-on-creating-the-accounts">A note on creating the accounts</h3>
+
+<p>Resources during Lambda Labs are a little tight, and as such the app is pretty much designed to exist within the free tier of every service that it relies on. The negative of this is that most free tiers don&rsquo;t allow you to create a team and manage permissions in an industry standard/secure way.</p>
+
+<p>The best way to handle this is to create a new Gmail account for this project and share the credentials for that account with your teammates. You&rsquo;ll then use <em>that</em> email address to create accounts with the necessary services.</p>
+
+<p>Speaking from experience, this will prevent a lot of headaches, like always having to wait on the one person with the login to heroku to deploy a specific branch or check the logs for errors.</p>
+
+<h1 id="generating-your-environment-file">Generating your Environment file</h1>
+
+<p>Training Bot expects the passwords and private keys it needs will be in a file named <code>.env</code> in the root of the repository.</p>
+
+<p>To this end, we&rsquo;ve created a file named <code>.env.sample</code> in the root of the repository that contains the environment variables that training bot needs to function locally.</p>
+
+<p>To create your own copy of this file in a single command, you can <code>cd</code> into your local repository and run:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cp .env.sample .env</code></pre></div>
+<p>You&rsquo;ll then need to add your assorted keys and passwords to the .env file where they&rsquo;re requested. See the <a href="prerequisites.md" target="_blank">prerequisites</a> documentation if you&rsquo;re not sure which keys you need.</p>
+
+<h2 id="auth0">Auth0</h2>
+
+<ul>
+<li><a href="https://auth0.com/" target="_blank">Official Site</a></li>
+<li><a href="https://auth0.com/docs" target="_blank">Developer Docs</a></li>
+</ul>
+
+<p><a href="https://auth0.com/" target="_blank">Auth0</a> is a universal authentication and authorization service that Training Bot uses to authenticate users to the application and also to register new users.</p>
+
+<h3 id="how-training-bot-uses-auth0">How Training Bot uses Auth0</h3>
+
+<ol>
+<li>User clicks &ldquo;Log in&rdquo; in the React app</li>
+<li>The React app redirects the user to the Auth0 login screen, and passes Auth0 a callback URL as a query string on the request</li>
+<li>The user selects which third-party service they&rsquo;d like to authenticate with (Google, LinkedIn, Facebook)</li>
+<li>The User is redirected from Auth0 to the third party service they selected to Authorize our application to create a user on their behalf</li>
+<li>Auth0 catches the OAuth tokens from the third party services and creates a user record inside their application</li>
+<li>Auth0 generates a JWT for that user, then redirects the user to the callback URL supplied initially by our application</li>
+<li>Our application accepts the token, creates a new User record in our database based on the information in the token, and then stores the JWT in the user&rsquo;s local storage.</li>
+<li>When the user attempts to access any route, we pull that ID token from local storage and include it as a header named &ldquo;Authorization&rdquo;, the API decrypts this token and verifies that the user has the appropriate Authorization to access a given resource.</li>
+</ol>
+
+<h3 id="configuring-auth0">Configuring Auth0</h3>
+
+<ol>
+<li><a href="https://auth0.com/signup" target="_blank">Create an account on Auth0</a> using the Labs team email you created before setting these services up (you did that, right?)</li>
+<li>Auth0 will ask you to set up your tennant domain. This can be anything you want it to be, but it isn&rsquo;t changeable so I would recommend something like <code>training-bot-VERSION</code>. For example, our tennant domain was <code>training-bot-2</code>, since we&rsquo;re the second iteration of the application.</li>
+<li>Auth0 will then ask you some demographic questions. Your &ldquo;Account Type&rdquo; should be &ldquo;Personal&rdquo;, your &ldquo;Role&rdquo; should be Developer, and your &ldquo;Project&rdquo; should be &ldquo;Application for consumers (B2C)&rdquo;</li>
+<li>Click &ldquo;Create Account&rdquo;, If all goes well, you&rsquo;ll be redirected to your dashboard</li>
+<li>From your Dashboard, click the orange &ldquo;Create Application&rdquo; button in the top right hand side.</li>
+<li>You can name your application anything you want, but &ldquo;Training Bot&rdquo; is probably a good idea. Once you&rsquo;ve picked a name, select &ldquo;Single Page Web Application&rdquo; as the type and click &ldquo;Create&rdquo;</li>
+<li>Ignore the &ldquo;Quick Start&rdquo; options and click &ldquo;Settings&rdquo; on the toolbar under your application header.</li>
+<li>On the &ldquo;Settings&rdquo; page, scroll down to &ldquo;Application Logo&rdquo; and paste this link: <code>https://i.imgur.com/izl59sH.png</code>. This will pull in your image for the authentication screen.</li>
+<li>Now scroll to &ldquo;Allowed Callback URLs&rdquo;. This is a security feature designed so that Auth0 will only send credentials to approved callback URLs. For now, you want to put <code>http://localhost:3000/callback</code>, but later you&rsquo;ll add the domain of your deployed Netlify URL along side that, leaving it looking like <code>http://localhost:3000/callback,https://NETLIFY_URL/callback</code></li>
+<li>Scroll to the bottom of that page and click &ldquo;Save Changes&rdquo;</li>
+<li>Click on the &ldquo;Connections&rdquo; menu item on the sidebar menu, and then click &ldquo;Database&rdquo; from the list of options.</li>
+<li>On the Database page, you&rsquo;ll see a settings cog next to &ldquo;Username-Password-Authentication&rdquo;. Training Bot doesn&rsquo;t allow email/password authentication, so you&rsquo;ll want to click that settings cog, scroll down to the bottom of that page, and click the red &ldquo;Delete&rdquo; button.</li>
+<li>Once that&rsquo;s done, you&rsquo;ll want to click on the &ldquo;Social&rdquo; option under the &ldquo;Connections&rdquo; menu item on the sidebar menu, which will navigate you to the Social Connections page.</li>
+<li>On this page, you&rsquo;ll want to enable any third party services that you&rsquo;d like to allow users to authenticate with. For now, you don&rsquo;t need to worry to much about configuration, and can use the Dev keys until you decide what you want to do for production.</li>
+<li>Go back to your settings page for your Auth0 application, you&rsquo;ll need the &ldquo;domain&rdquo;, and &ldquo;client ID&rdquo; information</li>
+<li>Copy that data, and replace the existing values in the <code>src/Auth/auth0-variables.js</code> file in the Front End repository with your domain and client ID data.</li>
+<li>You&rsquo;ve now set up Auth0 with Training Bot! Make sure to come back later and add the Netlify callback URL to the &ldquo;Allowed callback URL&rdquo; option in settings.</li>
+</ol>
+
+<h2 id="sendgrid">SendGrid</h2>
+
+<ul>
+<li><a href="https://sendgrid.com/" target="_blank">Official Site</a></li>
+<li><a href="https://sendgrid.com/docs/" target="_blank">Developer Docs</a></li>
+</ul>
+
+<p><a href="https://sendgrid.com/" target="_blank">Sendgrid</a> is a Marketing and Transactional email service used by developers around the world. Training Bot uses it to send email notifications out to the appropriate people.</p>
+
+<h3 id="configuring-sendgrid">Configuring SendGrid</h3>
+
+<p><strong>*Note</strong>: To configure sendgrid correctly, you&rsquo;ll need to have a custom domain. Talk with your PM about getting one from NameCheap using Lambda&rsquo;s resources*</p>
+
+<ol>
+<li><a href="https://sendgrid.com/pricing/" target="_blank">Create a &ldquo;Free&rdquo; account on SendGrid</a> using your Labs team email</li>
+<li>Navigate to the <a href="https://app.sendgrid.com/settings/sender_auth" target="_blank">Sender Authentication</a> page, and click &ldquo;Authenticate your domain&rdquo;. It will then walk you through adding the appropriate DNS records to your domain so that SendGrid can send mail on your behalf.</li>
+<li>Now that your domain is configured, navigate to the <a href="https://sendgrid.com/dynamic_templates" target="_blank">Transactional Templates</a> page, and click &ldquo;Create Template&rdquo;</li>
+<li>Create a template named &ldquo;training_bot_notification&rdquo; and click &ldquo;Save&rdquo;</li>
+<li>Copy the &ldquo;ID&rdquo; under your newly created template group, and paste it into the <code>jobs/notifications/lib/senders/email</code> file as the value for the &ldquo;templateId&rdquo; property in the object being passed to the <code>sgMail.send()</code> function.</li>
+<li>Back in the SendGrid GUI, click &ldquo;add version&rdquo; to start adding a template version; then select &ldquo;Code Editor&rdquo; as your experience and click &ldquo;Continue&rdquo; on the top right.</li>
+<li>Paste the code in <a href="https://gist.github.com/nickcannariato/c090975c2a0ac415d175c5d1d4544b60" target="_blank">this gist</a> into the code editor, then hit the &ldquo;Save Template&rdquo; button on the header bar.</li>
+<li>Now navigate to the <a href="https://app.sendgrid.com/settings/api_keys" target="_blank">API Keys page in your settings</a> and click &ldquo;Create API Key&rdquo; on the top right.</li>
+<li>Name your API key &ldquo;training_bot&rdquo;, select &ldquo;Full Access&rdquo; (unless you want to customize or restrict the permissions for that key) and click &ldquo;Create and View&rdquo;</li>
+<li>Copy the API key that SendGrid displays and paste it into your <code>.env</code> file as the value for the <code>SENDGRID_API_KEY</code> variable.</li>
+<li>Congrats! You&rsquo;re done!</li>
+</ol>
+
+<h2 id="slack">Slack</h2>
+
+<p><a href="https://api.slack.com/" target="_blank">Slack API Docs</a>
+<a href="https://slack.com/signin" target="_blank">Slack Workspace</a></p>
+
+<h3 id="create-a-new-slack-app">Create a new Slack App</h3>
+
+<ol>
+<li><a href="https://slack.com/create" target="_blank">Create a Slack workspace</a> your team can use to test the bot. Use your team&rsquo;s email account when creating. Follow the prompts and optionally add your teammates to the workspace. Once you&rsquo;re loaded in Slack, it&rsquo;s time to create the Slack App</li>
+<li><a href="https://api.slack.com/" target="_blank">Starting from the API linked above</a>, click on the &ldquo;Start Building&rdquo; button</li>
+<li>Name your app (I would suggest Training Bot) and select the workspace you just created in the Development Slack Workspace field then click &ldquo;Create App&rdquo;</li>
+<li>From the buttons listed in the &ldquo;Add features and functionality&rdquo;, click on &ldquo;Bots&rdquo; and then &ldquo;Add a Bot User&rdquo;. The default display name and default username should be fine but you&rsquo;re welcome to change them if you&rsquo;d like. &ldquo;Always Show My Bot as Online&rdquo; is your personal choice. Once you&rsquo;re happy with the settings, click on &ldquo;Add Bot User&rdquo;</li>
+<li>Once you see &ldquo;Success!&rdquo; at the top, click on Basic Information on the top left and drop down &ldquo;Add features and functionality&rdquo; and click on Permissions. Scroll down to Scopes and add the following permissions: channels:history, channels:read, chat:write:bot, groups:history, im:history, im:write, mpim:history, users:read. Once you&rsquo;re done, don&rsquo;t forget to click &ldquo;Save Changes&rdquo; at the bottom!</li>
+<li>Scroll back to the top and notice the two access tokens. <em>NEVER</em> use &ldquo;OAuth Access Token&rdquo; since that one is for you, the user. However, if you want to run some tests with your bot, you can &ldquo;Bot User OAuth Access Token&rdquo; to access it.  We no longer use this in the code however, as you should be able to authorize your own custom bot with the Training Bot code.  In other words, you won&rsquo;t need this token unless you are going out of your way to test something outside of the code base.</li>
+<li>Back in Basic Information on the Slack API site, look in the App Credentials section for Client ID, Client Secret, and Verification Token. Copy those to environment variables as follows: SLACK_CLIENT_ID=PASTE_CLIENT_ID_HERE, SLACK_SECRET=PASTE_CLIENT_SECRET_HERE, SLACK_VERIFICATION=PASTE_VERIFICATION_TOKEN_HERE. After oauth verification, Slack will want the client ID and Secret as extra precautions. However, the Verification Token is used with web hooks and since those requests come from the outside, Slack is going to send that token to you as proof of a legit request.</li>
+<li>Once you have all your environment variables, you need to tell Slack how to redirect users back to you after they authorize Slack, which you do under &ldquo;Redirect URL&rdquo;. You can find it on the left side under the &ldquo;Features&rdquo; section in &ldquo;OAuth &amp; Permissions&rdquo;. If you&rsquo;re running local tests then you can set it to &ldquo;<a href="http://localhost:3000/slack-callback&quot;" target="_blank">http://localhost:3000/slack-callback&quot;</a> but once your frontend and backend are live, set it to &ldquo;<a href="https://YOUR_APP_URL.netlify.com/slack-callback&quot;" target="_blank">https://YOUR_APP_URL.netlify.com/slack-callback&quot;</a>. Slack will want this url as part of the oauth process so make sure you have one last environment variable on the backend: APP_BASE_URL=<a href="http://localhost:3000" target="_blank">http://localhost:3000</a> (use this locally, update to your live URL on Netlify)</li>
+<li>Next, you need to setup webhooks to receive responses. Basic Information &ndash;&gt; Add Features and Functionality &ndash;&gt; Event Subscriptions. Click on &ldquo;Add Workspace Event&rdquo; and add these scopes: message.im, message.mpim</li>
+<li>Lastly, you need to tell Slack where it can send events when they trigger (your backend). Under Request URL, add a working URL to your backend and point it to the endpoint _<a href="https://YOUR_BACKEND_URL.heroku.com/api/responses/slack_" target="_blank">https://YOUR_BACKEND_URL.heroku.com/api/responses/slack_</a> As soon as you type the URL, Slack is going to immediately send a challenge to that endpoint and expect the challenge back within a short time limit. If you are testing locally, you can use <a href="https://ngrok.com/download" target="_blank">ngrok</a> to forward requests to your localhost. Otherwise, point it to your working Heroku backend and it should pass the challenge just fine.</li>
+<li>Rejoice, you now have a working Slack bot!</li>
+</ol>
+
+<h2 id="stripe">Stripe</h2>
+
+<h2 id="twilio">Twilio</h2>
+
+<ul>
+<li><a href="https://www.twilio.com/" target="_blank">Official Site</a></li>
+<li><a href="https://www.twilio.com/docs/" target="_blank">Developer Docs</a></li>
+</ul>
+
+<p><a href="https://www.twilio.com/" target="_blank">Twilio</a> is a messaging service that Training bot uses to send SMS messages.</p>
+
+<h3 id="configuring-twilio">Configuring Twilio</h3>
+
+<ol>
+<li><a href="https://www.twilio.com/try-twilio" target="_blank">Create a Twilio account</a> using your Labs team email.</li>
+<li>Verify a phone number with Twilio (this will be used to send text messages while your project is in Trial mode)</li>
+<li>In the upper left hand corner, click the dropdown to the right of your email address, and then click &ldquo;Create New Project&rdquo; in the dropdown that appears.</li>
+<li>Click the &ldquo;Products&rdquo; tab, select &ldquo;Programmable SMS&rdquo; and click the red &ldquo;Continue&rdquo; button</li>
+<li>Name your project <code>training_bot</code>, and then click the red &ldquo;Continue&rdquo; button.</li>
+<li>Click &ldquo;Skip this step&rdquo; on the invite teammates screen.</li>
+<li>Click the red &ldquo;Get Started&rdquo; button in the Programmable SMS module on your dashboard.</li>
+<li>Click the &ldquo;Get a Number&rdquo; link that appears in the Programmable SMS getting started docs.</li>
+<li>Click the red &ldquo;Choose this number&rdquo; button in the popup that shows after they give you a number.</li>
+<li>Copy the phone number that appears on the next screen into your <code>.env</code> file as the value for the <code>TWILIO_NUMBER</code> variable. (Should look like <code>+1XXXXXXXXXX</code>), and then click &ldquo;Done&rdquo;</li>
+<li><a href="https://www.twilio.com/console" target="_blank">Navigate back to your console</a> and copy the &ldquo;Account SID&rdquo; string in the top left hand portion of your dashboard. Paste it into your <code>.env</code> file as the value for the <code>TWILIO_SID</code> variable.</li>
+<li>Back in your Dashboard, click the &ldquo;view&rdquo; link next to &ldquo;Auth Token&rdquo; just under where you copied your &ldquo;Account SID&rdquo;.</li>
+<li>Copy the token that gets revealed into your <code>.env</code> fild as the value for the <code>TWILIO_TOKEN</code> variable</li>
+<li>That&rsquo;s it! You&rsquo;re good to send SMS messages now.</li>
+</ol>
+
+    
+        
+
+<h1 id="frontend">Frontend</h1>
+
+<p>Training Bot client application, built in React &amp; Redux</p>
+
+<h2 id="frontend-table-of-contents">Frontend Table of Contents</h2>
+
+<ul>
+<li><a href="#background">Background</a></li>
+<li><a href="#Deploy">Deploy</a></li>
+<li><a href="#Components">Components</a></li>
+<li><a href="#Auth">Auth</a></li>
+<li><a href="#Store">Store</a></li>
+<li><a href="#maintainers">Maintainers</a></li>
+<li><a href="#license">License</a></li>
+</ul>
+
+<h2 id="background-from-training-bot-2-team">Background, from Training Bot 2 team</h2>
+
+<p>As Training Bot 2, we inherited our code base, as you do now, but found we were uncertain we could accomplish our goals with the code that we were given.  So we sacrificed some of our development time to refactor the code bases and designed it with future teams in mind (you&rsquo;ll have to let us know if we were successful or not)!</p>
+
+<p>While the front end refactor was never 100% completed, the heavy lifting has already been done.  With all of our features and documentation added, the React portion of the app is actually significantly lighter than when we found it.  We have created reusable components that should make expanding any features far easier and our two main components (SearchCard and NotificationsCard) are largely stripped of context and can be used again on a whim!</p>
+
+<p>So now we pass the project on to you, much more robust than we found it, and we hope our efforts make your transition easier and that you&rsquo;re able to expand upon the ideas we started.  So in our final week, we&rsquo;ve prepared these docs for you and added a one-click feature to get a live version of the app running ideally on day one.  We really loved working on Training Bot and hope you do too!</p>
+
+<ul>
+<li>Training Bot 2</li>
+</ul>
+
+<h2 id="deploy">Deploy</h2>
+
+<p>We&rsquo;ve configured a one-click deploy to Netlify that will allow you to get the front end of the site up and running with a guided set up:</p>
+
+<p><strong>Note</strong>: Make sure you&rsquo;ve completed the <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/docs/prerequisites.md#configuring-auth0" target="_blank">Auth0 section of the prerequisite docs</a> in the <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE" target="_blank">Training Bot API repository</a></p>
+
+<p><a href="https://app.netlify.com/start/deploy?repository=https://github.com/labs12-training-bot-2/labs12-training-bot-2-FE" target="_blank"><img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" /></a></p>
+
+<h2 id="components">Components</h2>
+
+<pre><code>note that the structure of this documentation is broken up by folder. Headings will represent top level folders, and blockquotes will represent nested folders
+</code></pre>
+
+<h3 id="misc">Misc</h3>
+
+<hr />
+
+<h4 id="authenticate">authenticate</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>authenticate.js</td>
+<td>a HOC that checks for authenticated user and routes accordingly</td>
+<td>head to &ldquo;/home&rdquo; unauthenticated</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>import/export authenticate.js for easier loading</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for authenticate.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="callback">Callback</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Callback.js</td>
+<td>&ndash;</td>
+<td>&ndash;</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td></td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td></td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>SlackCallback.js</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="stripe">Stripe</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>CheckoutForm.js</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>StripeCard.js</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>StripeView.js</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>UnsubscribeModal.js</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h3 id="navigation">Navigation</h3>
+
+<hr />
+
+<h4 id="appbar">AppBar</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>AppBar.js</td>
+<td>loads the top bar depending on current view</td>
+<td>any view loads one of the two variations of the app bar</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and exports AppBar.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for AppBar.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="returntopreviouspage">ReturnToPreviousPage</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and exports ReturnToPreviousPage.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>ReturnToPreviousPage.js</td>
+<td>A components loaded on nested routes to return to last page</td>
+<td>/home/&hellip;</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h3 id="pages">Pages</h3>
+
+<hr />
+
+<h4 id="dashboard">Dashboard</h4>
+
+<blockquote>
+<blockquote>
+<p>Dashboard</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Dashboard.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Dashboard.js</td>
+<td>Loads the navigation bars and conditional renders tabs depending on what nav link you click</td>
+<td>&rdquo;/home&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Dashboard.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p><em>helpers</em></p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>TabNavigation.js</td>
+<td>Navigation bar visible below the @media breakpoint for desktop view</td>
+<td>&rdquo;/home&rdquo; under 650px</td>
+</tr>
+
+<tr>
+<td>DesktopNavigation.js</td>
+<td>Navigation bar visible above the @media breakpoint for desktop view</td>
+<td>&rdquo;/home&rdquo; above 650px</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Loader</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Loader.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Loader.js</td>
+<td>tells users dashboard how/what to load and when. loads routes, and tells tour to open if a user is logging in for the first time</td>
+<td>&rdquo;/home&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Loader.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Routes</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Routes.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Routes.js</td>
+<td>includes all routes which require authentication via authenticate.js.</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="landingpage">LandingPage</h4>
+
+<blockquote>
+<blockquote>
+<p>LandingPage</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>load and render landing page</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>LandingPage.js</td>
+<td>landing page for application</td>
+<td>&rdquo;/&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for landing page</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Pricing</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders pricing page</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Pricing.js</td>
+<td>Pricing page thats accessible via the landing page</td>
+<td>&rdquo;/pricing&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for pricing page</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Team</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders team page</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Team.js</td>
+<td>Team page that&rsquo;s accessible via the landing page</td>
+<td>&rdquo;/team&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for team page</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="notifications">Notifications</h4>
+
+<blockquote>
+<blockquote>
+<p>Card</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Card.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Card.js</td>
+<td>Parent &ldquo;card&rdquo; container for Notification display</td>
+<td>&rdquo;/home&rdquo; on overview tab.</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Card and NotificationsTab</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>NotificationsTab.js</td>
+<td>Essentially same component as Card.js. separated because we planned on adding functionality to this component</td>
+<td>&rdquo;/home&rdquo; on notifications tab</td>
+</tr>
+
+<tr>
+<td>filter.js</td>
+<td>A function for applying pagination</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Overview</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Overview.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Overview.js</td>
+<td>loads cards inside of pending notifications</td>
+<td>&rdquo;/home&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Overview.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>TeamMember</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders TeamMember.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>TeamMember.js</td>
+<td>loads cards inside of pending notifications</td>
+<td>&rdquo;/home&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for TeamMember</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Responses</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Responses.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Responses.js</td>
+<td>this component is the tab used to view responses on the dashboard</td>
+<td>&rdquo;/home&rdquo; navigate to responses tab</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Responses.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="profile">Profile</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Profile.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Profile.js</td>
+<td>component for the profile/settings page</td>
+<td>&rdquo;/home/profile&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Profile.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="teammembers">TeamMembers</h4>
+
+<blockquote>
+<blockquote>
+<p>Add</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Add.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Add.js</td>
+<td>This component display conditionally the add/edit team member pages</td>
+<td>&rdquo;/home/create-team-member&rdquo; or &ldquo;/home/team-member/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Add.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>helpers</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>AddButtons.js</td>
+<td>Buttons for adding team member. checks if routing and shows animation</td>
+<td>add a team member</td>
+</tr>
+
+<tr>
+<td>EditButtons.js</td>
+<td>Edit buttons for team members. Add.js renders this or AddButtons.js conditionally dependent on if you&rsquo;re adding or editing</td>
+<td>edit a team member</td>
+</tr>
+
+<tr>
+<td>MemberInfoForm.js</td>
+<td>Form rendered when adding or editing a team member</td>
+<td>add/edit a team member</td>
+</tr>
+
+<tr>
+<td>Relationships.js</td>
+<td>Renders &ldquo;Select&rdquo; drop downs for mentor/manager assignments when adding/editing a team member</td>
+<td>add/edit a team member</td>
+</tr>
+
+<tr>
+<td>SelectSlackID.js</td>
+<td>Conditionally renders slack drop down or a prompt to set up your slack.</td>
+<td>add/edit a team member</td>
+</tr>
+
+<tr>
+<td>testPhoneNumber.js</td>
+<td>a RegEx function which checks to see if the input phone number is actually a phone number.</td>
+<td>add/edit a team member</td>
+</tr>
+
+<tr>
+<td>updateNotifications.js</td>
+<td>If the user updates a relationship (manager/mentor), this will update their notifications.</td>
+<td>add/edit a team member</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>reducer</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>Reducer for the react &ldquo;useReducer&rdquo; hook. stores all team member info for filling out form. essentially the &ldquo;state&rdquo; of Add.js and its child components</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Assign</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Assign.js</td>
+<td>Component for the piece of a training series page where you see the list of your currently assigned team members, as well as the button to assign them</td>
+<td>&rdquo;/home/training-series/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders Assigns.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Assign.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Edit</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Edit.js</td>
+<td>Displays the entire edit team members page</td>
+<td>/home/team-member/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders Edit.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Edit.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>List</p>
+
+<blockquote>
+<p>Assign</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Assign.js</td>
+<td>Shows list of assigned team members to a training series, as well as their start date</td>
+<td>&rdquo;/home/training-series/29&rdquo;</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>Loads and renders Assign.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Assign.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Overview</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Overview.js</td>
+<td>List of team members seen on the overview tab</td>
+<td>&rdquo;/home&rdquo;</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders Overview.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Overview.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Tab</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>TeamMembersTab.js</td>
+<td>Team members tab wrapper component</td>
+<td>&rdquo;/home&rdquo; navigate to team member page</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders TeamMembersTab.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for TeamMembersTab.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>TeamMembersTabSingle.js</td>
+<td>Since member component loaded inside of TeamMembersTab.js</td>
+<td>&rdquo;/home&rdquo; navigate to team member page</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="trainingseries">TrainingSeries</h4>
+
+<blockquote>
+<blockquote>
+<p>Add</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>AddMemberToTrainingSeries.js</td>
+<td>Component for adding a team member to a training series</td>
+<td>&rdquo;/home/assign-members/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>CreateMessage.js</td>
+<td>Component fro creating a new message for a training series</td>
+<td>&rdquo;/home/create-message&rdquo;</td>
+</tr>
+
+<tr>
+<td>CreateMessageStyles.js</td>
+<td>Styles for CreateMessage.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>CreateTrainingSeries.js</td>
+<td>Component for creating a training series (form where you fill out a title)</td>
+<td>&rdquo;/home/create-training-series&rdquo;</td>
+</tr>
+
+<tr>
+<td>CreateTrainingSeriesStyles.js</td>
+<td>Styles for CreateTrainingSeries</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>MessagePage.js</td>
+<td>Component for Editing a message in a training series</td>
+<td>&rdquo;/home/message/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>MessagePageStyles.js</td>
+<td>Styles for MessagePage.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>singleMemberCheck.js</td>
+<td>Component for each team member when assigning members to a series</td>
+<td>&rdquo;/home/assign-members/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for singleMemberCheck.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Edit</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Edit.js</td>
+<td>Wrapper component for a training series page</td>
+<td>&rdquo;/home/training-series/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders Edit.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Edit.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>helpers</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Title.js</td>
+<td>Title component for a training series. allows editing of title of training series</td>
+<td>&rdquo;/home/training-series/:id&rdquo;</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>List</p>
+
+<blockquote>
+<p>Messages</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Messages.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Messages.js</td>
+<td>list of messages on a training series page</td>
+<td>&rdquo;/home/training-series/:id&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Messages.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Overview</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Overview.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Overview.js</td>
+<td>List of training series on overview tab of dashboard</td>
+<td>&rdquo;/home&rdquo;</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Overview.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Tab</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Tab.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>TrainingSeriesTab.js</td>
+<td>Training series wrapper component for tab on dashboard</td>
+<td>&rdquo;/home&rdquo; navigate to training series tab</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Tab.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>Messages</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>loads and renders Messages.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>filter.js</td>
+<td>a function for filtering search results</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for Messages.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>Messages.js</td>
+<td>inner component starting with &ldquo;Messages&rdquo; on a training series page</td>
+<td>&rdquo;/home/training-series/:id&rdquo;</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h3 id="ui">UI</h3>
+
+<hr />
+
+<h4 id="contactmodal">ContactModal</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>ContactModal.js</td>
+<td>Component for contact form</td>
+<td>Go through tour and click &ldquo;contact us&rdquo;</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="helpmodal">HelpModal</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>HelpModal.js</td>
+<td>Component for help panel</td>
+<td>Click help icon at top left of page</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="infopopup">InfoPopup</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>InfoPopup.js</td>
+<td>Reusable component for creating help popups in app</td>
+<td>for instance, click on a training series and hover over &ldquo;i&rdquo; icon</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="modals">Modals</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>deleteModal.js</td>
+<td>reusable delete modal</td>
+<td>click trash icon on overview team members</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="progress">Progress</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>loading.css</td>
+<td>styles for progress circle animation</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>ProgressCircle.js</td>
+<td>a loading progress circle</td>
+<td>on login</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="searchcard">SearchCard</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>filter.js</td>
+<td>filter function for searching</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders SearchCard.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>SearchCard.js</td>
+<td>Parent &ldquo;card&rdquo; container for any TeamMembers displays</td>
+<td>&rdquo;/home&rdquo; team members on overview tab</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for SearchCard</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<blockquote>
+<p>CardHeader</p>
+</blockquote>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>CardHeader.js</td>
+<td>Header for Team Members search card on overview</td>
+<td>&rdquo;/home&rdquo; Team Members on overview</td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>loads and renders CardHeader.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>styles.js</td>
+<td>styles for CardHeader.js</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="snackbar">Snackbar</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Snackbar.js</td>
+<td>renders snackbar popups throughout app</td>
+<td></td>
+</tr>
+
+<tr>
+<td>index.js</td>
+<td>import and render Snackbar.js</td>
+<td>n/a</td>
+</tr>
+
+<tr>
+<td>SnackBarTeamMember.js</td>
+<td>small popup modal for successfully creating a Team Member</td>
+<td>add a team member</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<h4 id="tour">Tour</h4>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Purpose</th>
+<th>How To View</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Tour.js</td>
+<td>parent component for tour on login/take tour</td>
+<td>create new account or click show tutorial at &ldquo;/home/profile&rdquo;</td>
+</tr>
+</tbody>
+</table>
+
+<p><br />
+<br /></p>
+
+<hr />
+
+<hr />
+
+<hr />
+
+<h2 id="auth">Auth</h2>
+
+<p>TODO: Write Auth section</p>
+
+<pre><code>Probably just want to write a description on how auth system works
+</code></pre>
+
+<h2 id="store">Store</h2>
+
+<pre><code>The actions/store setup for this application are fairly standard for react/redux applications you've likely worked with in the past. You'll notice that actions are split into separate folders based on what they're used for. All actions are being exported via index.js and can be referenced as such. Reducers are similar, in that they are being split into separate reducers dependent on usage and combined via Redux's &quot;combineReducers&quot;. You can reference individual reducers via their specific files. The store itself lives entirely inside of index.js &quot;rootReducer&quot;.
+</code></pre>
+
+    
+        
+
+<h1 id="backend">Backend</h1>
+
+<blockquote>
+<p>An Express + Node.js API for Training Bot</p>
+</blockquote>
+
+<h2 id="backend-table-of-contents">Backend Table of Contents</h2>
+
+<ul>
+<li><a href="#background">Background</a></li>
+<li><a href="#Deploy">Deploy</a></li>
+<li><a href="#api">API</a>
+
+<ul>
+<li><a href="#Authentication">Authentication</a></li>
+<li><a href="#Resources">Resources</a></li>
+<li><a href="#Auth">Auth</a></li>
+<li><a href="#Users">Users</a></li>
+<li><a href="#Team-Members">Team Members</a></li>
+<li><a href="#Training-Series">Training Series</a></li>
+<li><a href="#Messages">Messages</a></li>
+<li><a href="#Stripe">Stripe</a></li>
+<li><a href="#Slack">Slack</a></li>
+<li><a href="#Notifications">Notifications</a></li>
+<li><a href="#Responses">Responses</a></li>
+</ul></li>
+<li><a href="#maintainers">Maintainers</a></li>
+<li><a href="#license">License</a></li>
+</ul>
+
+<h2 id="background">Background</h2>
+
+<p>TODO: Write background section</p>
+
+<h2 id="deploy">Deploy</h2>
+
+<p>This project has an <code>app.json</code> file, which allows us to offer &ldquo;one-click deployment&rdquo; to Heroku. This will allow you to get your own version of Training Bot up and running both quickly and painlessly.</p>
+
+<p><strong>NOTE:</strong> Before clicking the button below you&rsquo;ll want to make sure you&rsquo;ve completed the <a href="../docs/prerequisites.md">prerequisite setup steps</a> in the <a href="../docs/README.md">complete documentation</a>.</p>
+
+<p><a href="https://heroku.com/deploy?template=https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/" target="_blank"><img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy" /></a></p>
+
+<h2 id="api">API</h2>
+
+<h3 id="authentication">Authentication</h3>
+
+<p>Most routes require authentication, and Training Bot handles authentication by looking for a valid JWT&rsquo;s on the <code>Authorization</code> header of a given request.</p>
+
+<p>Valid JWTs are provided by the Auth0 integration with our <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-FE" target="_blank">React application</a>. However &ndash; for testing &ndash; You can get a token programattically using the <a href="https://auth0.com/docs/api/management/v2/get-access-tokens-for-test" target="_blank">Auth0 Management API</a>.</p>
+
+<hr />
+
+<h3 id="resources">Resources</h3>
+
+<p>Heroku base URL <a href="https://trainingbot-3.herokuapp.com/" target="_blank">https://trainingbot-3.herokuapp.com/</a></p>
+
+<h4 id="auth">Auth</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/auth/</code></td>
+<td align="center">POST</td>
+<td align="left">Takes a valid JWT provided by Auth0 and logs the user in</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/auth.js#L9-L65" target="_blank">JS Docs</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="users">Users</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/users/:id</code></td>
+<td align="center">DELETE</td>
+<td align="left">Deletes a specific user based on the ID parameter</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/user.js#L7-L31" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="team-members">Team Members</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/team-members/</code></td>
+<td align="center">GET, POST</td>
+<td align="left">Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L58-L143" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/team-members/:id</code></td>
+<td align="center">GET, PUT, DELETE</td>
+<td align="left">Read, Update, and Delete specific Team Members</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L57-L141" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/team-members/:id/unassign/:ts_id</code></td>
+<td align="center">DELETE</td>
+<td align="left">Unassign a specified Team Member from a Training Series</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L144-L213" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="training-series">Training Series</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/training-series/</code></td>
+<td align="center">GET, POST</td>
+<td align="left">Get all the training series associated with an authenticated User and/or Create a new training series associated with an authenticated User</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L15-L53" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/training-series/:id</code></td>
+<td align="center">GET, POST, DELETE</td>
+<td align="left">Read, Update, and Delete specific training series</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L55-L140" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/training-series/:id/messages</code></td>
+<td align="center">GET</td>
+<td align="left">Get all the messages for a specific training series</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L142-L170" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/training-series/:id/assignees</code></td>
+<td align="center">GET</td>
+<td align="left">Get the team members for the specific training series</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L172-L215" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="messages">Messages</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/messages/</code></td>
+<td align="center">GET, POST</td>
+<td align="left">Get all Messages associated with an authenticated User and/or Create a new Message associated with an authenticated User</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L13-L66" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/messages/:id</code></td>
+<td align="center">GET, PUT, DELETE</td>
+<td align="left">Read, Update, and Delete specific Messages</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L68-L165" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="stripe">Stripe</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/stripe/</code></td>
+<td align="center">POST</td>
+<td align="left">allows user to update/change their stripe plan.</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L120-L168" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/stripe/register</code></td>
+<td align="center">POST</td>
+<td align="left">register the user with stripe&rsquo;s API to get a stripe ID</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L169-L198" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/stripe/unsubscribe</code></td>
+<td align="center">POST</td>
+<td align="left">allows user to unsubscribe from their current plan.</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L200-L223" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/stripe/plans</code></td>
+<td align="center">GET</td>
+<td align="left">allows user to see available plans (basic, premium, pro)</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L225-L256" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/stripe/subscriptions</code></td>
+<td align="center">GET</td>
+<td align="left">Allows the user to access the three subscription that go with the three plans</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L257-L278" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/stripe/customer/plan</code></td>
+<td align="center">GET</td>
+<td align="left">Shows the user what their current plan is</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L279-L294" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/stripe/paymentintent</code></td>
+<td align="center">POST</td>
+<td align="left">required by the stripe API to be able to collect credit card payments.</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L296-L316" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="slack">Slack</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/slack/oauth</code></td>
+<td align="center">POST</td>
+<td align="left">Creates authenticated Slack Token in the database after oauth validation</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L24-L60" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/slack/</code></td>
+<td align="center">GET</td>
+<td align="left">Get all Slack users from the authenticated Slack workspace</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L62-L95" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/slack/:id/history</code></td>
+<td align="center">GET</td>
+<td align="left">Get all messages in specific DM chat history with specified Team Member</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L97-L138" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/slack/sendMessageNow</code></td>
+<td align="center">POST</td>
+<td align="left">Bypass Notification timer and immediately send specified Team Member a Slack Message, for testing purposes only</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L140-L208" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="notifications">Notifications</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/notifications/</code></td>
+<td align="center">GET, POST</td>
+<td align="left">Get all Notifications associated with an authenticated User and/or Create a new Notification associated with an authenticated User</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L15-L80" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/notifications/:id</code></td>
+<td align="center">GET</td>
+<td align="left">Get specific Notifications</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L82-L109" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/notifications/:id/response</code></td>
+<td align="center">GET</td>
+<td align="left">Get all Responses associated with an authenticated User for specific Notification</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L111-L143" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/notifications/:id/delete</code></td>
+<td align="center">DELETE</td>
+<td align="left">Delete specific Notifications</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L145-L167" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="responses">Responses</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">route</th>
+<th align="center">methods</th>
+<th align="left">description</th>
+<th align="center">Docs</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><code>api/responses</code></td>
+<td align="center">GET</td>
+<td align="left">Get all Responses for authenticated User</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L22-L40" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/responses/:id</code></td>
+<td align="center">GET, DELETE</td>
+<td align="left">Get or delete specific Response</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L42-L91" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/responses/email</code></td>
+<td align="center">POST</td>
+<td align="left">Create a new email Response</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L93-L159" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/responses/sms</code></td>
+<td align="center">POST</td>
+<td align="left">Create a new text Response</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L161-L212" target="_blank">JS Doc</a></td>
+</tr>
+
+<tr>
+<td align="left"><code>api/responses/slack</code></td>
+<td align="center">POST</td>
+<td align="left">Create a new Slack Response</td>
+<td align="center"><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L214-L264" target="_blank">JS Doc</a></td>
+</tr>
+</tbody>
+</table>
+
+    
+        
+
+<h1 id="endpoints">Endpoints</h1>
+
+    
+        
+
+<h1 id="contributors">Contributors</h1>
+
+<h2 id="training-bot-3">Training Bot 3</h2>
+
+<table>
+<thead>
+<tr>
+<th align="center"><a href="https://github.com/dsnair" target="_blank"><strong>dsnair</strong></a></th>
+<th align="center"><a href="tfolbrecht" target="_blank"><strong>tfolbrecht</strong></a></th>
+<th align="center"><a href="https://github.com/chandlerben" target="_blank"><strong>chandlerben</strong></a></th>
+<th align="center"><a href="https:/github.com/JoeBugajski" target="_blank"><strong>JoeBugajski</strong></a></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center"><a href="https://github.com/dsnair" target="_blank"><img src="https://github.com/dsnair.png?s=80" width="80"></a></td>
+<td align="center"><a href="https://github.com/tfolbrecht" target="_blank"><img src="https://github.com/tfolbrecht.png?s=80" width="80"></a></td>
+<td align="center"><a href="https://github.com/chandlerben" target="_blank"><img src="https://github.com/chandlerben.png?s=80" width="80"></a></td>
+<td align="center"><a href="https:/github.com/JoeBugajski" target="_blank"><img src="https:/github.com/JoeBugajski.png?s=80" width="80"></a></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="training-bot-2">Training Bot 2</h2>
+
+<h2 id="training-bot-1">Training Bot 1</h2>
+
+    
+        
+
+<h1 id="database">Database</h1>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+<li><a href="#intro">Intro</a></li>
+<li><a href="#overview">Overview</a>
+
+<ul>
+<li><a href="#diagram">Diagram</a></li>
+<li><a href="#resources">Resources</a></li>
+<li><a href="#account_types">account_types</a></li>
+<li><a href="#users">users</a></li>
+<li><a href="#services">services</a></li>
+<li><a href="#tokens">tokens</a></li>
+<li><a href="#team_members">team_members</a></li>
+<li><a href="#training_series">training_series</a></li>
+<li><a href="#messages">messages</a></li>
+<li><a href="#notifications">notifications</a></li>
+<li><a href="#responses">responses</a></li>
+</ul></li>
+<li><a href="#database-standards">Database Standards</a>
+
+<ul>
+<li><a href="#methods">Methods</a></li>
+<li><a href="#key-names">Key Names</a></li>
+</ul></li>
+<li><a href="#local-database">Local Database</a></li>
+</ul>
+
+<h2 id="intro">Intro</h2>
+
+<p>This document will describe the data model built out for the back end, including links to an interactive diagram, describe the standard model methods and key names used to access and manipulate data within the database as well, and information for setting up a local database with PostgreSQL.</p>
+
+<h2 id="overview">Overview</h2>
+
+<p>The data model was refactored into this current shape based on the needs of the app&ndash;note that there are no many-to-many relationships. Previously, the back end had been duplicating data in Notifications from other tables such as Messages and Team Members that already existed in those tables. With this current model there is no duplication of data properties, and since the existence of a Notification linking a specific Message (and therefore Training Series) and Team Member together was the only confirmation needed that a Team Member was &ldquo;assigned&rdquo; to that Training Series, the many-to-many table connecting the Team Members and Training Series was eliminated. All needed database info is therefore accessible by simply joining as many tables together as required, and then selecting the desired information from wherever it may exist. This structure is simpler to work with on the back end with minimal filtering on the front end thanks to Redux, and is much more scalable if more data fields would be required.</p>
+
+<h3 id="diagram">Diagram</h3>
+
+<p><a href="https://dbdiagram.io/d/5cbdd308f7c5bb70c72fb643" target="_blank">Link</a> to interactive diagram of current database model.</p>
+
+<p>Special note about [dbdiagram.io]: you can generate a FK&gt;&gt;&gt;PK relationship by simply dragging and dropping from the desired Foreign Key to the desired Primary Key.</p>
+
+<p><img src="img/db-diagram.png" alt="Diagram of database model" /></p>
+
+<h3 id="resources">Resources</h3>
+
+<p>Note that all Tables are all snake_case and plural so as to allow for hassle-free manipulation with UNIX-based systems, database, query syntax, and reduction of typos. All tables also have auto-generated id integer as Primary Key. Seeded data is hard-code for some resources such as account_types which the current app calls for three specific entries and no more, other resources generated by <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/helpers/fakeData.js" target="_blank">fakeData.js</a> using npm package faker, see the documentation <a href="https://github.com/marak/Faker.js/" target="_blank">here</a></p>
+
+<h4 id="account-types">account_types</h4>
+
+<p>The types of accounts currently offered by the app: currently only free, premium, and pro, with an associated maximum notification count per month. User can change their account level via interaction with Stripe.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js" target="_blank">Migrations</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>title</td>
+<td>string</td>
+<td>Title of account type: currently only Free, Premium, and Pro based on user interaction with Stripe</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>max_notification_count</td>
+<td>integer</td>
+<td>Number of notifications a user is permitted per month based on type. Free:50, Premium:200, Pro:100</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="users">users</h4>
+
+<p>The logged-in end user that performs all operations within the app&rsquo;s front end. Other resources will be retrieved based on the currently logged-in user&rsquo;s email having been set on res.locals during authentication, and will not be able to retrieve information in the database they did not create.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#8-25" target="_blank">Migrations</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#3-20" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>full user name</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>email</td>
+<td>string</td>
+<td>user email, used for authentication</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>stripe</td>
+<td>string</td>
+<td>Authenticated Stripe ID, if user has one</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>notifications_sent</td>
+<td>integer</td>
+<td>Tracks how many notifications have been sent on user&rsquo;s behalf, resets every month</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>account_type_id</td>
+<td>integer (FK)</td>
+<td>points to account_types.id</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="services">services</h4>
+
+<p>Services available for messaging option, currently Twilio, Sendgrid, and Slack.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#26-29" target="_blank">Migrations</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>name of services available for messaging Team Members, currently limited to twilio, sendgrid, and slack</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="tokens">tokens</h4>
+
+<p>Tokens stored either for oAuth authentication or Slack identity validation. Stored for a specific User.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#30-49" target="_blank">Migrations</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#75-89" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>expiration</td>
+<td>datetime</td>
+<td>when stored token will no longer be valid</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>auth_token</td>
+<td>string</td>
+<td>token given for oAuth authentication</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>refresh_token</td>
+<td>string</td>
+<td>provided by oAuth services if needed for obtaining a renewed access token</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>service_id</td>
+<td>integer (FK)</td>
+<td>points to services.id</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>user_id</td>
+<td>integer (FK)</td>
+<td>points to users.id</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="team-members">team_members</h4>
+
+<p>Team Members that will be sent automated messages containing the training content. Can have other Team Members assigned as their manager or mentor, which allows for other options for who gets sent messages when the Team Member is assigned to a Training Series.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#50-77" target="_blank">Migrations</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#22-45" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>first_name</td>
+<td>string</td>
+<td>team member&rsquo;s first name</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>last_name</td>
+<td>string</td>
+<td>team member&rsquo;s last name</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>job_description</td>
+<td>string</td>
+<td>team member&rsquo;s job description</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>email</td>
+<td>string</td>
+<td>team member&rsquo;s email, used for sending sendgrid messages if present</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>phone_number</td>
+<td>string</td>
+<td>team member&rsquo;s phone number, used for sending twilio messages and is required so a team member has at least one form of contact</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>slack_uuid</td>
+<td>string</td>
+<td>unique identifier for team member&rsquo;s slack account, used to send slack messages if integrated and present</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>manager_id</td>
+<td>integer (FK)</td>
+<td>points to other entry in team_members table, denotes manager relationship with team member</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>mentor_id</td>
+<td>integer (FK)</td>
+<td>points to other entry in team_members table, denotes mentor relationship team member</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="training-series">training_series</h4>
+
+<p>Describes the Training Series that any number of Messages with training content can be generated for&ndash;any Team Member assigned to a given series (or their manager or mentor) can be sent these messages. The act of assigning a Team Member to the series, including options as to which available messaging medium the communication should go through, is what generates the actual Notifications that are delivered to said Team Member.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#78-88" target="_blank">Migrations</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#47-53" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>title</td>
+<td>string</td>
+<td>title of training series</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>user_id</td>
+<td>integer (FK)</td>
+<td>points to users.id</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="messages">messages</h4>
+
+<p>User creates this content with a title and description of what the message is, optionally includes a URL link for content. Note that said link is not meant to be generated by the app, this would be the actual training content that end users would want their employees to receive messages about so they could complete training.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#89-110" target="_blank">Primary migration</a>, <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190515004244_add_for_team_member.js#3-7" target="_blank">secondary migration</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#55-73" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>subject</td>
+<td>string</td>
+<td>subject of message to be sent to team members assigned to training series</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>body</td>
+<td>string</td>
+<td>message content</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>link</td>
+<td>string</td>
+<td>url string that links message recipient to training content (not created by app)</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>training_series_id</td>
+<td>integer (FK)</td>
+<td>points to Training Series the message was created for</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>for_manager</td>
+<td>boolean</td>
+<td>denotes whether message will send notification to an assigned Team Member&rsquo;s manager, defaults to false</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>for_mentor</td>
+<td>boolean</td>
+<td>denotes whether message will send notification to an assigned Team Member&rsquo;s mentor, defaults to false</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>for_manager</td>
+<td>boolean</td>
+<td>denotes whether message will send notification to an assigned Team Member&rsquo;s manager, defaults to false</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>for_team_member</td>
+<td>boolean</td>
+<td>denotes whether message will send notification to an assigned Team Member, defaults to false. if not set to true, assume it must be sent to manager or mentor</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>days_from_start</td>
+<td>int</td>
+<td>how many days from the start of a Team Member being assigned to the Training Series before the Message will be sent</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="notifications">notifications</h4>
+
+<p>Notifications are automatically generated when a Team Member is assigned to a Training Series that has Messages. Note that the team_member_id is the ID of the Team Member who was originally assigned, but since we want to allow messaging of managers and mentors only for a Message that the Team Member themselves would not receive, or to send a Message to any combination of all three, the recipient_id denotes the Team Member this Notification is actually going to and may be different than team_member_id.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#111-144" target="_blank">Primary migration</a>, <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190521131026_add_recipient_id.js#3-10" target="_blank">secondary migration</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#91-115" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>send_date</td>
+<td>datetime</td>
+<td>calculated datetime for when notification will be sent based on when recipient is set to start the Training Series based on messages.days_from_start</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>is_sent</td>
+<td>boolean</td>
+<td>denotes whether Notification has been successfully sent, defaults to false</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>num_attempts</td>
+<td>integer</td>
+<td>how many times Notification has attempted to be sent&ndash;current max allowed is 6</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>thread</td>
+<td>string</td>
+<td>unique thread relating to message history between recipient Team Member and Slack</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>message_id</td>
+<td>integer(FK)</td>
+<td>points to message.id of Message this Notification was generated from</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>service_id</td>
+<td>integer(FK)</td>
+<td>points to services.id to denote whether messaging medium is twilio, sendgrid, or slack (currently no others)</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>team_member_id</td>
+<td>integer(FK)</td>
+<td>points to team_members.id of Team Member whose assignment to the Training Series caused the Notification to be generated (not necessarily the recipient)</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>recipient_id</td>
+<td>integer(FK)</td>
+<td>points to team_members.id of Team Member the Notification is going to&ndash;may be assigned Team Member&rsquo;s manager or mentor</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="responses">responses</h4>
+
+<p>The catalogued Response from a Team Member as a reply to the Notification they received from the specific service. This currently could be either an sms response from Twilio, an email response from Sendgrid, or a DM chat response from Slack.</p>
+
+<p><a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#145-159" target="_blank">Migrations</a> and <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#117-124" target="_blank">schema validation</a></p>
+
+<table>
+<thead>
+<tr>
+<th>property</th>
+<th>type</th>
+<th>description</th>
+<th>required</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>body</td>
+<td>string</td>
+<td>contents of response from Team Member to a successfully sent Notification, needs to be parsed</td>
+<td>no</td>
+</tr>
+
+<tr>
+<td>notification_id</td>
+<td>integer(FK)</td>
+<td>points to notifications.id of Notification the Response is responding to</td>
+<td>yes</td>
+</tr>
+
+<tr>
+<td>created_at</td>
+<td>timestamp</td>
+<td>timestamp of when Response was created, used to filter based on most recent</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="database-standards">Database Standards</h2>
+
+<p>These sections describe the standards adhered when accessing the back end in the interest of making the code scalable, easy to work with once you know the codebase, integrate extra table resources, write extra endpoints to access those resources, or to audit any of the existing methods and endpoints.</p>
+
+<h3 id="methods">Methods</h3>
+
+<p>Originally almost all of the existing resources had anywhere between 5 and 10 database methods, many of which were superfluous. All resources now have 4 standardized methods to minimize confusion and simplify both bug-hunting and expansion of functionality. The few exceptions here are that Responses do not require an .update() method in the current scope of the app, Tokens.add() first perform a nested Services.find() to retrieve the desired services.id, Users.find() selects different fields depending on whether it was passed a filter or not, and Notifications.update() does not return the updated resource as it is not currently required.</p>
+
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>.find(filters)</td>
+<td>Can READ either a single resource or multiple resources based on the filter passed in. It is the controller&rsquo;s responsibility to chain .first() on the response if expecting retrieve only a single resource.</td>
+</tr>
+
+<tr>
+<td>.add(resource)</td>
+<td>CREATES resource into the database, then performs chained .find()  to retrieve the newly-created object by its ID with the shape we laid out instead of just the values existing for that resource.</td>
+</tr>
+
+<tr>
+<td>.update(filter, changes)</td>
+<td>UPDATES specific resource in the database based on the filters passed in (usually its own ID) and the sent changes, then performs chained .find() to retrieve the updated resource.</td>
+</tr>
+
+<tr>
+<td>.remove(filter)</td>
+<td>DELETES resource from the database based on filter (usually its own ID, but other fields are used). Returns default 0 or 1 if deletion failed or succeeded.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="key-names">Key Names</h3>
+
+<p>Methods use a standardized abbreviations for methods that require filtering or joining onto other resource tables (resource AS abbreviation)</p>
+
+<table>
+<thead>
+<tr>
+<th>resource</th>
+<th>abbreviation</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>messages</td>
+<td>m</td>
+</tr>
+
+<tr>
+<td>users</td>
+<td>u</td>
+</tr>
+
+<tr>
+<td>training_series</td>
+<td>ts</td>
+</tr>
+
+<tr>
+<td>team_members</td>
+<td>tm</td>
+</tr>
+
+<tr>
+<td>responses</td>
+<td>r</td>
+</tr>
+
+<tr>
+<td>tokens</td>
+<td>tk</td>
+</tr>
+
+<tr>
+<td>services</td>
+<td>s</td>
+</tr>
+
+<tr>
+<td>account_types</td>
+<td>a</td>
+</tr>
+</tbody>
+</table>
+
+<p>See documentation for <a href="https://knexjs.org/#Builder-join" target="_blank">Knex.js</a> for further information on joins and the syntax used.</p>
+
+<h2 id="local-database">Local Database</h2>
+
+<p>Local database setup will require installation of postgreSQL as a service on your local machine, and not just run in your IDE as a library. Different installation methods exist depending on your OS, check out the documentation on installing at <a href="https://www.postgresql.org/download/" target="_blank">postgresql.org</a></p>
+
+    
+        
+
+<h1 id="setup">Setup</h1>
+
+<p>This document will explain what&rsquo;s needed to set up your local development environment, including some optional (but highly recommended) tools to speed your workflow up and improve the consistency of your code with the existing codebase.</p>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+<li><a href="#required-tools">Required tools</a>
+
+<ul>
+<li><a href="#postgresql">PostgreSQL</a></li>
+</ul></li>
+<li><a href="#optional-tools">Optional Tools</a>
+
+<ul>
+<li><a href="#gitmoji-cli">Gitmoji CLI</a></li>
+<li><a href="#prettier">Prettier</a></li>
+</ul></li>
+</ul>
+
+<h2 id="required-tools">Required tools</h2>
+
+<p>The following tools or pieces of software are required to set up a local developer environment for Training Bot.</p>
+
+<h3 id="postgresql">PostgreSQL</h3>
+
+<p>Both the development and production databases for Training Bot are designed for PostgreSQL. This means that in order to run the API locally, you&rsquo;ll need to install PostgreSQL on your system.</p>
+
+<p>The reason for this is consistency, since Lambda Labs teams don&rsquo;t have a staging/dev server to work with, ensuring that your local devlopment database mirrors the production database is essential if you want to write the right code the first time.</p>
+
+<p>You&rsquo;ll find install instructions for your system on the <a href="https://www.postgresql.org/" target="_blank">official website</a>. Once it&rsquo;s installed you&rsquo;ll need to create a database for your local system, and then put your database, your postgres username, and your postgres user password into your <code>.env</code> file.</p>
+
+<h2 id="optional-tools">Optional tools</h2>
+
+<p>The following development tools are optional, but highly recommended.</p>
+
+<h3 id="gitmoji-cli-https-github-com-carloscuesta-gitmoji-cli"><a href="https://github.com/carloscuesta/gitmoji-cli" target="_blank">Gitmoji-CLI</a></h3>
+
+<p>The gitmoji-cli is a global npm package that will help you both categorize and form great commit messages using the <a href="https://gitmoji.carloscuesta.me/" target="_blank">Gitmoji schema for commits</a>. You can install it by running the following command in your terminal:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">npm i -g gitmoji-cli</code></pre></div>
+<p>After it&rsquo;s installed, you&rsquo;ll want to <code>cd</code> into your local repository and configure it by running:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gitmoji --config</code></pre></div>
+<p>Gitmoji will then ask you a series of configuration questions.</p>
+
+<p>You&rsquo;ll want to say <code>n</code> to <code>Enable Automatic &quot;git add .&quot;</code>, choose &ldquo;github&rdquo; as the issue format, use the <code>:smile:</code> option for how to emojis should be used, and say <code>n</code> to <code>Enable signed commits</code> (unless you know what you&rsquo;re doing there and have a signing key set up with Git already).</p>
+
+<p>After you&rsquo;re configured, you&rsquo;ll add the gitmoji hook to your local repository by running:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">gimoji --init</code></pre></div>
+<p>After that, whenever you run <code>git commit</code> it will ask you a series of questions to form your commit message. The benefit of this is:</p>
+
+<ol>
+<li>A better commit history</li>
+<li>The ability to search your commit history by emoji to find a certain <em>type</em> of change (i.e. <code>:fire:</code> to find places where code or files were deleted, which might have caused the weird bug you&rsquo;re now seeing :laughing:)</li>
+</ol>
+
+<p>More detailed information on this can be found at <a href="https://github.com/carloscuesta/gitmoji-cli" target="_blank">the package&rsquo;s official repository</a>, and you can see how it was used on the Labs 12 version of Training Bot in <a href="https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE" target="_blank">their repository</a></p>
+
+<h1 id="prettier">Prettier</h1>
+
+<p><a href="https://prettier.io/" target="_blank">Prettier</a> is an opinionated code formatter. The negative here is that it won&rsquo;t make any one person super happy because everyone will likely have <em>some</em> issue with its opinions. The positive here is that it will guarantee that your team&rsquo;s code looks the same without having to set up a detailed linter or a bunch of rules. It has extensions for most editors and should be installable without issue.</p>
+
+    
+
+        </div>
+        <div class="dark-box">
+            
+            <div class="lang-selector">
+                
+                <a href="#" data-language-name="shell">Code</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+</body>
+</html>

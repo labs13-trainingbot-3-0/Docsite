@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Training Bot 3 API</title>
+    <link>/</link>
+    <description>Recent content on Training Bot 3 API</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>API Reference</title>
+      <link>/introduction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/introduction/</guid>
+      <description> Introduction Welcome to the Training Bot 3 Project. This document will walk you through how to configure, deploy, and interact with the Training Bot 3, and the APIs it consumes.
+Git Workflow # Lambda School git flow git checkout master git pull git checkout $your-name git merge master # we eventually started using feature based branches git checkout master git pull git checkout $feature-name git merge master TB3 Trello Board TB3 Product Canvas TB3 Wire Frame TB3 Slack Channel for Lambda School </description>
+    </item>
+    
+    <item>
+      <title>Old Docs</title>
+      <link>/prevdocs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/prevdocs/</guid>
+      <description>Training Bot Documentation This is the detailed developer documentation for Training Bot, and as such, we&amp;rsquo;ve written these docs with Lambda Labs teams who are inheriting this application in mind.
+The following docs should be completed in order, both to ensure a smooth deployment and also to guarantee a scalable workflow for each developer:
+ Prerequisites Deployment Setup  And the documentation listed below is more for reference, they describe big picture ideas like the directory structure of the application and how the data model works:</description>
+    </item>
+    
+    <item>
+      <title>Prerequisites</title>
+      <link>/backenddocs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/backenddocs/</guid>
+      <description>Setup This document will explain what&amp;rsquo;s needed to set up your local development environment, including some optional (but highly recommended) tools to speed your workflow up and improve the consistency of your code with the existing codebase.
+Table of Contents  Required tools  PostgreSQL  Optional Tools  Gitmoji CLI Prettier   Required tools The following tools or pieces of software are required to set up a local developer environment for Training Bot.</description>
+    </item>
+    
+    <item>
+      <title>Prerequisites</title>
+      <link>/prereqs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/prereqs/</guid>
+      <description>Prerequisites Table of Contents  Intro  A note on creating the accounts Generating your environment file  Auth0  How Training Bot uses Auth0 Configuring Auth0  SendGrid  Configuring SendGrid  Slack Stripe Twilio  Configuring Twilio   Intro Before deploying or doing much of anything with Training Bot, you&amp;rsquo;re going to need to set up some accounts with the third party services that Training Bot relies on.</description>
+    </item>
+    
+    <item>
+      <title>Frontend</title>
+      <link>/frontend/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/frontend/</guid>
+      <description>Frontend Training Bot client application, built in React &amp;amp; Redux
+Frontend Table of Contents  Background Deploy Components Auth Store Maintainers License  Background, from Training Bot 2 team As Training Bot 2, we inherited our code base, as you do now, but found we were uncertain we could accomplish our goals with the code that we were given. So we sacrificed some of our development time to refactor the code bases and designed it with future teams in mind (you&amp;rsquo;ll have to let us know if we were successful or not)!</description>
+    </item>
+    
+    <item>
+      <title>Backend</title>
+      <link>/backend/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/backend/</guid>
+      <description>Backend  An Express + Node.js API for Training Bot
+ Backend Table of Contents  Background Deploy API  Authentication Resources Auth Users Team Members Training Series Messages Stripe Slack Notifications Responses  Maintainers License  Background TODO: Write background section
+Deploy This project has an app.json file, which allows us to offer &amp;ldquo;one-click deployment&amp;rdquo; to Heroku. This will allow you to get your own version of Training Bot up and running both quickly and painlessly.</description>
+    </item>
+    
+    <item>
+      <title>API Reference</title>
+      <link>/apiendpoints/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/apiendpoints/</guid>
+      <description> Endpoints </description>
+    </item>
+    
+    <item>
+      <title>Contributors</title>
+      <link>/contributers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/contributers/</guid>
+      <description> Contributors Training Bot 3    dsnair tfolbrecht chandlerben JoeBugajski            Training Bot 2 Training Bot 1 </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/dbdocs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/dbdocs/</guid>
+      <description>Database Table of Contents  Intro Overview  Diagram Resources account_types users services tokens team_members training_series messages notifications responses  Database Standards  Methods Key Names  Local Database  Intro This document will describe the data model built out for the back end, including links to an interactive diagram, describe the standard model methods and key names used to access and manipulate data within the database as well, and information for setting up a local database with PostgreSQL.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/setupdocs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/setupdocs/</guid>
+      <description>Setup This document will explain what&amp;rsquo;s needed to set up your local development environment, including some optional (but highly recommended) tools to speed your workflow up and improve the consistency of your code with the existing codebase.
+Table of Contents  Required tools  PostgreSQL  Optional Tools  Gitmoji CLI Prettier   Required tools The following tools or pieces of software are required to set up a local developer environment for Training Bot.</description>
+    </item>
+    
+  </channel>
+</rss>

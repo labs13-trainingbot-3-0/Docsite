@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/introduction/</loc>
+  </url>
+  
+  <url>
+    <loc>/prevdocs/</loc>
+  </url>
+  
+  <url>
+    <loc>/backenddocs/</loc>
+  </url>
+  
+  <url>
+    <loc>/prereqs/</loc>
+  </url>
+  
+  <url>
+    <loc>/frontend/</loc>
+  </url>
+  
+  <url>
+    <loc>/backend/</loc>
+  </url>
+  
+  <url>
+    <loc>/apiendpoints/</loc>
+  </url>
+  
+  <url>
+    <loc>/contributers/</loc>
+  </url>
+  
+  <url>
+    <loc>/dbdocs/</loc>
+  </url>
+  
+  <url>
+    <loc>/setupdocs/</loc>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <priority>0</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="nn"
+                href="/nn/categories/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="/categories/"
+                />
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <priority>0</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="nn"
+                href="/nn/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="/tags/"
+                />
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <priority>0</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="nn"
+                href="/nn/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="/"
+                />
+  </url>
+  
+</urlset>
